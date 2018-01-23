@@ -5,7 +5,7 @@ CONFIG += console
 CONFIG -= app_bundle
 CONFIG -= qt
 
-QMAKE_CXXFLAGS += -Wno-unused-parameters
+QMAKE_CXXFLAGS += -Wno-unused-parameters -O3
 
 systemc_home = $$(SYSTEMC_HOME)
 isEmpty(systemc_home) {
@@ -18,12 +18,12 @@ isEmpty(systemc_target_arch) {
 
 unix:!macx {
     systemc_target_arch = linux64
-    QMAKE_CXXFLAGS += -std=c++11 -O0 -g
+    QMAKE_CXXFLAGS += -std=c++11
 }
 
 macx: {
     systemc_target_arch = macosx64
-    QMAKE_CXXFLAGS += -std=c++0x -stdlib=libc++ -O0 -g
+    QMAKE_CXXFLAGS += -std=c++0x -stdlib=libc++
 }
 
 INCLUDEPATH += $${systemc_home}/include

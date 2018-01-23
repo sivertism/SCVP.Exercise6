@@ -9,8 +9,8 @@
 int sc_main (int __attribute__((unused)) sc_argc,
              char __attribute__((unused)) *sc_argv[])
 {
-    processor cpu0("cpu0","/home/sivert/git/SCVP.Exercise6/stimuli1.txt", sc_time(1,SC_NS));
-    processor cpu1("cpu1","/home/sivert/git/SCVP.Exercise6/stimuli2.txt", sc_time(1,SC_NS));
+    processor cpu0("cpu0","/home/sivert/git/SCVP.Exercise6/random1.txt", sc_time(1,SC_NS));
+    processor cpu1("cpu1","/home/sivert/git/SCVP.Exercise6/random2.txt", sc_time(1,SC_NS));
     memory<512> memory0("memory0");
     memory<512> memory1("memory1");
 
@@ -23,7 +23,9 @@ int sc_main (int __attribute__((unused)) sc_argc,
 
     std::cout << std::endl << "Name "
               << std::setfill(' ') << std::setw(10)
-              << "Time" << " "
+              << "TimeSC" << " "
+              << std::setfill(' ') << std::setw(10)
+              << "TimeQK" << " "
               << std::setfill(' ') << std::setw(5)
               << "CMD" << "   "
               << std::setfill(' ') << std::setw(8)

@@ -60,7 +60,7 @@ processor::processor(sc_module_name, std::string pathToFile, sc_time cycleTime) 
 
     SC_THREAD(process);
 
-    quantumKeeper.set_global_quantum(sc_time(100,SC_NS)); // STATIC!
+    quantumKeeper.set_global_quantum(sc_time(100000,SC_NS)); // STATIC!
     quantumKeeper.reset();
 }
 
@@ -108,15 +108,17 @@ void processor::process()
         }
 
 
-        sc_time delay; // = quantumKeeper.get_local_time();
+        sc_time delay;
 
-        if(sc_time_stamp() <= cycles * cycleTime)
+        if(quantumKeeper.get_current_time() <= cycles * cycleTime)
         {
-            //delay = cycles * cycleTime - sc_time_stamp();
-            delay = cycles * cycleTime - quantumKeeper.get_local_time();
+            // We need to wait a bit before sending the next txn
+            delay = cycles * cycleTime - quantumKeeper.get_current_time();
         }
         else
         {
+            // Stimuli is sending faster than we can handle, send the next
+            // txn immediately.
             delay = sc_time(0, SC_NS);
         }
 
@@ -124,35 +126,37 @@ void processor::process()
         trans.set_data_length(4);
         trans.set_data_ptr(data);
         trans.set_command(read ? tlm::TLM_READ_COMMAND : tlm::TLM_WRITE_COMMAND);
+        // Txn is sent with a delay, target acts as if it received the txn $delay$ time later.
         iSocket->b_transport(trans, delay);
 
         //wait(delay);
-        quantumKeeper.set(delay); // Annotate time of target
-        quantumKeeper.inc(sc_time(0, SC_NS)); // No computation time consumed.
-
+        quantumKeeper.set(delay);               // Annotate time of target
+        quantumKeeper.inc(sc_time(0, SC_NS));   // No computation time consumed.
 
         if (quantumKeeper.need_sync()){
             quantumKeeper.sync();
         }
 
-        std::cout << std::setfill(' ') << std::setw(4)
-                  << name() << " "
-                  << std::setfill(' ') << std::setw(10)
-                  << sc_time_stamp() << " "
-                  << std::setfill(' ') << std::setw(5)
-                  << (read ? "read" : "write") << " 0x"
-                  << std::setfill('0') << std::setw(8)
-                  << address
-                  << " 0x" << std::hex
-                  << std::setfill('0') << std::setw(2)
-                  << (unsigned int)data[0]
-                  << std::setfill('0') << std::setw(2)
-                  << (unsigned int)data[1]
-                  << std::setfill('0') << std::setw(2)
-                  << (unsigned int)data[2]
-                  << std::setfill('0') << std::setw(2)
-                  << (unsigned int)data[3]
-                  << std::endl;
+//        std::cout << std::setfill(' ') << std::setw(4)
+//                  << name() << " "
+//                  << std::setfill(' ') << std::setw(10)
+//                  << sc_time_stamp() << " "
+//                  << std::setfill(' ') << std::setw(10)
+//                  << quantumKeeper.get_current_time() << " "
+//                  << std::setfill(' ') << std::setw(5)
+//                  << (read ? "read" : "write") << " 0x"
+//                  << std::setfill('0') << std::setw(8)
+//                  << address
+//                  << " 0x" << std::hex
+//                  << std::setfill('0') << std::setw(2)
+//                  << (unsigned int)data[0]
+//                  << std::setfill('0') << std::setw(2)
+//                  << (unsigned int)data[1]
+//                  << std::setfill('0') << std::setw(2)
+//                  << (unsigned int)data[2]
+//                  << std::setfill('0') << std::setw(2)
+//                  << (unsigned int)data[3]
+//                  << std::endl;
     }
 
     // End Simulation because there are no events.

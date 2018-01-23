@@ -20,7 +20,7 @@ public:
     }
 
     void b_transport(tlm::tlm_generic_payload &trans, sc_time &delay){
-        delay += sc_time(20, SC_NS);
+        delay += sc_time(5, SC_NS);
 
         if (trans.get_address()<512){
             // Forward to iSocket[0]
