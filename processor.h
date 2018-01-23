@@ -34,7 +34,7 @@ class processor : public sc_module, tlm::tlm_bw_transport_if<>
     void invalidate_direct_mem_ptr(sc_dt::uint64 start_range,
                                    sc_dt::uint64 end_range)
     {
-        SC_REPORT_FATAL(this->name(),"invalidate_direct_mem_ptr not implement");
+        SC_REPORT_FATAL(this->name(),"invalidate_direct_mem_ptr not implemented");
     }
 
     // Dummy method:
@@ -49,6 +49,7 @@ class processor : public sc_module, tlm::tlm_bw_transport_if<>
 
 
 };
+
 processor::processor(sc_module_name,
                      std::string pathToFile,
                      sc_time cycleTime) :
@@ -119,8 +120,8 @@ void processor::process()
 
         trans.set_address(address);
         trans.set_data_length(4);
-        trans.set_command(read?tlm::TLM_READ_COMMAND:tlm::TLM_WRITE_COMMAND);
         trans.set_data_ptr(data);
+        trans.set_command(read ? tlm::TLM_READ_COMMAND : tlm::TLM_WRITE_COMMAND);
         iSocket->b_transport(trans, delay);
 
         wait(delay);
