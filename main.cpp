@@ -5,6 +5,7 @@
 #include "processor.h"
 #include "bus.h"
 
+
 int sc_main (int __attribute__((unused)) sc_argc,
              char __attribute__((unused)) *sc_argv[])
 {
